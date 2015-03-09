@@ -3,6 +3,10 @@
 name = "urpc"
 version = "0.0.1"
 authors = ["Keegan McAllister <kmcallister@mozilla.com>"]
+repository = "https://github.com/kmcallister/urpc"
+readme = "README.md"
+license = "MIT/Apache-2.0"
+description = "Tiny RPC framework"
 
 [dependencies]
 rustc-serialize = "0"
