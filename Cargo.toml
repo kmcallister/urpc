@@ -11,8 +11,8 @@ description = "Tiny RPC framework"
 [dependencies]
 rustc-serialize = "0"
 
-[dev-dependencies]
-unix_socket = "0"
+[dev-dependencies.unix_socket]
+git = "https://github.com/sfackler/rust-unix-socket"
 
 [dependencies.bincode]
 git = "https://github.com/TyOverby/bincode"
