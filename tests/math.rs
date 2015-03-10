@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor)]
+#![feature(unsafe_destructor, io)]
 
 extern crate "rustc-serialize" as rustc_serialize;
 

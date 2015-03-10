@@ -36,15 +36,16 @@ macro_rules! urpc {
         }
 
         pub struct Client<Stream> {
-            stream: Stream,
+            stream: ::std::io::BufStream<Stream>,
         }
 
         impl<Stream> Client<Stream>
             where Stream: $crate::rt::Stream,
         {
             pub fn new(stream: Stream) -> Client<Stream> {
+                use std::io::BufStream;
                 Client {
-                    stream: stream
+                    stream: BufStream::new(stream),
                 }
             }
         }
@@ -109,6 +110,7 @@ pub mod rt {
         where W: Write, T: Encodable
     {
         try!(bincode::encode_into(t, w, SizeLimit::Infinite));
+        try!(w.flush());
         Ok(())
     }
 
@@ -145,6 +147,12 @@ impl error::Error for Error {
             Error::IoError(ref e) => Some(e),
             Error::ProtocolError => None,
         }
+    }
+}
+
+impl error::FromError<io::Error> for Error {
+    fn from_error(e: io::Error) -> Error {
+        Error::IoError(e)
     }
 }
 
