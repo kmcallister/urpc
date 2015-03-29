@@ -1,6 +1,4 @@
-#![feature(io, core)]
-
-extern crate "rustc-serialize" as rustc_serialize;
+extern crate rustc_serialize as rustc_serialize;
 extern crate bincode;
 
 use std::{io, fmt, error, result};
@@ -35,7 +33,7 @@ macro_rules! urpc {
             )*
         }
 
-        pub struct Client<Stream> {
+        pub struct Client<Stream: $crate::rt::Stream> {
             stream: ::std::io::BufStream<Stream>,
         }
 
@@ -137,7 +135,7 @@ impl fmt::Display for Error {
 impl error::Error for Error {
     fn description(&self) -> &str {
         match *self {
-            Error::IoError(ref e) => e.description(),
+            Error::IoError(ref e) => error::Error::description(e),
             Error::ProtocolError => "urpc protocol error",
         }
     }

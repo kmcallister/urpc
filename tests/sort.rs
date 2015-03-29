@@ -1,6 +1,6 @@
-#![feature(unsafe_destructor, io)]
+#![feature(unsafe_destructor, slice_patterns)]
 
-extern crate "rustc-serialize" as rustc_serialize;
+extern crate rustc_serialize as rustc_serialize;
 
 extern crate unix_socket;
 
