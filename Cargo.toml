@@ -9,6 +9,7 @@ license = "MIT/Apache-2.0"
 description = "Tiny RPC framework"
 
 [dependencies]
+bufstream = "0.1"
 rustc-serialize = "0"
 
 [dev-dependencies.unix_socket]

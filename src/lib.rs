@@ -1,5 +1,6 @@
 extern crate rustc_serialize as rustc_serialize;
 extern crate bincode;
+extern crate bufstream;
 
 use std::{io, fmt, error, result};
 use bincode::{EncodingError, DecodingError};
@@ -34,16 +35,15 @@ macro_rules! urpc {
         }
 
         pub struct Client<Stream: $crate::rt::Stream> {
-            stream: ::std::io::BufStream<Stream>,
+            stream: $crate::rt::BufStream<Stream>,
         }
 
         impl<Stream> Client<Stream>
             where Stream: $crate::rt::Stream,
         {
             pub fn new(stream: Stream) -> Client<Stream> {
-                use std::io::BufStream;
                 Client {
-                    stream: BufStream::new(stream),
+                    stream: $crate::rt::BufStream::new(stream),
                 }
             }
         }
@@ -100,6 +100,8 @@ pub mod rt {
     use bincode::{self, SizeLimit};
 
     use super::Result;
+
+    pub use bufstream::BufStream;
 
     pub trait Stream: Read + Write { }
     impl<T: Read + Write> Stream for T { }
