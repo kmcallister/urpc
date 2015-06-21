@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, libc, slice_patterns, core)]
+#![feature(core)]
 
 extern crate rustc_serialize as rustc_serialize;
 
@@ -33,7 +33,7 @@ impl oops::Methods for Whoops {
 fn server_crash() {
     use oops::Methods;
 
-    let [s1, s2] = UnixStream::unnamed().unwrap();
+    let (s1, s2) = UnixStream::unnamed().unwrap();
 
     let pid = unsafe { libc::fork() };
     assert!(pid >= 0);

@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, slice_patterns)]
+#![feature(scoped)]
 
 extern crate rustc_serialize as rustc_serialize;
 
@@ -54,7 +54,7 @@ fn local() {
 fn socket() {
     use math::Methods;
 
-    let [s1, s2] = UnixStream::unnamed().unwrap();
+    let (s1, s2) = UnixStream::unnamed().unwrap();
     let thread = thread::scoped(move || {
         let _ = math::serve(LocalMath, s1);
     });
