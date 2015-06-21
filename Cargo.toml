@@ -9,14 +9,10 @@ license = "MIT/Apache-2.0"
 description = "Tiny RPC framework"
 
 [dependencies]
+bincode = "0.3"
 bufstream = "0.1"
 rustc-serialize = "0"
 
 [dev-dependencies]
 libc = "*"
-
-[dev-dependencies.unix_socket]
-git = "https://github.com/sfackler/rust-unix-socket"
-
-[dependencies.bincode]
-git = "https://github.com/TyOverby/bincode"
+unix_socket = "0.4"
