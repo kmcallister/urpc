@@ -1,5 +1,3 @@
-#![feature(scoped)]
-
 extern crate rustc_serialize as rustc_serialize;
 
 extern crate unix_socket;
@@ -55,7 +53,7 @@ fn socket() {
     use math::Methods;
 
     let (s1, s2) = UnixStream::unnamed().unwrap();
-    let thread = thread::scoped(move || {
+    let thread = thread::spawn(move || {
         let _ = math::serve(LocalMath, s1);
     });
 
@@ -64,5 +62,5 @@ fn socket() {
     assert_eq!(111, client.collatz(27).unwrap());
 
     drop(client);
-    thread.join();
+    thread.join().unwrap();
 }

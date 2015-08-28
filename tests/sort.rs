@@ -1,5 +1,3 @@
-#![feature(scoped)]
-
 extern crate rustc_serialize as rustc_serialize;
 
 extern crate unix_socket;
@@ -40,7 +38,7 @@ fn socket() {
     use sort::Methods;
 
     let (s1, s2) = UnixStream::unnamed().unwrap();
-    let thread = thread::scoped(move || {
+    let thread = thread::spawn(move || {
         let _ = sort::serve(LocalSort, s1);
     });
 
@@ -51,5 +49,5 @@ fn socket() {
         client.sort(vec![0; 10000]).unwrap());
 
     drop(client);
-    thread.join();
+    thread.join().unwrap();
 }
