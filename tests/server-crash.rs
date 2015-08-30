@@ -1,5 +1,3 @@
-#![feature(unsafe_destructor, libc, slice_patterns, core)]
-
 extern crate rustc_serialize as rustc_serialize;
 
 extern crate unix_socket;
@@ -8,7 +6,6 @@ extern crate libc;
 #[macro_use]
 extern crate urpc;
 
-use std::intrinsics;
 use unix_socket::UnixStream;
 
 urpc! {
@@ -22,9 +19,12 @@ struct Whoops;
 impl oops::Methods for Whoops {
     fn oops(&mut self, x: u8) -> urpc::Result<u8> {
         assert_eq!(x, 42);
-        unsafe {
-            intrinsics::volatile_set_memory(0 as *mut u8, 0, 1 << 32);
-        }
+
+        // Deliberately crash the server.  Can't do this in a single statement,
+        // since the compiler yells at us.
+        let zero = 0;
+        let _: i32 = 1 / zero;
+
         Ok(0) // yeah right
     }
 }
@@ -33,7 +33,7 @@ impl oops::Methods for Whoops {
 fn server_crash() {
     use oops::Methods;
 
-    let [s1, s2] = UnixStream::unnamed().unwrap();
+    let (s1, s2) = UnixStream::unnamed().unwrap();
 
     let pid = unsafe { libc::fork() };
     assert!(pid >= 0);

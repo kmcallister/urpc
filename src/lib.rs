@@ -1,7 +1,8 @@
 extern crate rustc_serialize as rustc_serialize;
 extern crate bincode;
+extern crate bufstream;
 
-use std::{io, fmt, error, result};
+use std::{io, fmt, error, result, convert};
 use bincode::{EncodingError, DecodingError};
 
 #[macro_export]
@@ -34,21 +35,19 @@ macro_rules! urpc {
         }
 
         pub struct Client<Stream: $crate::rt::Stream> {
-            stream: ::std::io::BufStream<Stream>,
+            stream: $crate::rt::BufStream<Stream>,
         }
 
         impl<Stream> Client<Stream>
             where Stream: $crate::rt::Stream,
         {
             pub fn new(stream: Stream) -> Client<Stream> {
-                use std::io::BufStream;
                 Client {
-                    stream: BufStream::new(stream),
+                    stream: $crate::rt::BufStream::new(stream),
                 }
             }
         }
 
-        #[unsafe_destructor]
         impl<Stream> Drop for Client<Stream>
             where Stream: $crate::rt::Stream,
         {
@@ -101,6 +100,8 @@ pub mod rt {
 
     use super::Result;
 
+    pub use bufstream::BufStream;
+
     pub trait Stream: Read + Write { }
     impl<T: Read + Write> Stream for T { }
 
@@ -148,14 +149,14 @@ impl error::Error for Error {
     }
 }
 
-impl error::FromError<io::Error> for Error {
-    fn from_error(e: io::Error) -> Error {
+impl convert::From<io::Error> for Error {
+    fn from(e: io::Error) -> Error {
         Error::IoError(e)
     }
 }
 
-impl error::FromError<EncodingError> for Error {
-    fn from_error(e: EncodingError) -> Error {
+impl convert::From<EncodingError> for Error {
+    fn from(e: EncodingError) -> Error {
         match e {
             EncodingError::IoError(e) => Error::IoError(e),
             EncodingError::SizeLimit => unreachable!(),
@@ -163,8 +164,8 @@ impl error::FromError<EncodingError> for Error {
     }
 }
 
-impl error::FromError<DecodingError> for Error {
-    fn from_error(e: DecodingError) -> Error {
+impl convert::From<DecodingError> for Error {
+    fn from(e: DecodingError) -> Error {
         match e {
             DecodingError::IoError(e) => Error::IoError(e),
             DecodingError::InvalidEncoding(_) => Error::ProtocolError,
