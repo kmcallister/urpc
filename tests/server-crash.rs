@@ -19,13 +19,9 @@ struct Whoops;
 impl oops::Methods for Whoops {
     fn oops(&mut self, x: u8) -> urpc::Result<u8> {
         assert_eq!(x, 42);
-
-        // Deliberately crash the server.  Can't do this in a single statement,
-        // since the compiler yells at us.
-        let zero = 0;
-        let _: i32 = 1 / zero;
-
-        Ok(0) // yeah right
+        unsafe {
+            libc::_exit(1);
+        }
     }
 }
 

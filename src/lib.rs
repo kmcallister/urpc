@@ -2,8 +2,8 @@ extern crate rustc_serialize as rustc_serialize;
 extern crate bincode;
 extern crate bufstream;
 
-use std::{io, fmt, error, result, convert};
-use bincode::{EncodingError, DecodingError};
+use std::{io, fmt, error, result};
+use bincode::rustc_serialize::{EncodingError, DecodingError};
 
 #[macro_export]
 macro_rules! urpc {
@@ -108,7 +108,7 @@ pub mod rt {
     pub fn send<W, T>(w: &mut W, t: &T) -> Result<()>
         where W: Write, T: Encodable
     {
-        try!(bincode::encode_into(t, w, SizeLimit::Infinite));
+        try!(bincode::rustc_serialize::encode_into(t, w, SizeLimit::Infinite));
         try!(w.flush());
         Ok(())
     }
@@ -116,7 +116,7 @@ pub mod rt {
     pub fn recv<R, T>(r: &mut R) -> Result<T>
         where R: Read, T: Decodable
     {
-        let r = try!(bincode::decode_from(r, SizeLimit::Infinite));
+        let r = try!(bincode::rustc_serialize::decode_from(r, SizeLimit::Infinite));
         Ok(r)
     }
 }
@@ -149,13 +149,13 @@ impl error::Error for Error {
     }
 }
 
-impl convert::From<io::Error> for Error {
+impl From<io::Error> for Error {
     fn from(e: io::Error) -> Error {
         Error::IoError(e)
     }
 }
 
-impl convert::From<EncodingError> for Error {
+impl From<EncodingError> for Error {
     fn from(e: EncodingError) -> Error {
         match e {
             EncodingError::IoError(e) => Error::IoError(e),
@@ -164,7 +164,7 @@ impl convert::From<EncodingError> for Error {
     }
 }
 
-impl convert::From<DecodingError> for Error {
+impl From<DecodingError> for Error {
     fn from(e: DecodingError) -> Error {
         match e {
             DecodingError::IoError(e) => Error::IoError(e),

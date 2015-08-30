@@ -9,10 +9,10 @@ license = "MIT/Apache-2.0"
 description = "Tiny RPC framework"
 
 [dependencies]
-bincode = "0.3"
+bincode = "0.4"
 bufstream = "0.1"
 rustc-serialize = "0"
 
 [dev-dependencies]
-libc = "*"
+libc = "0.1"
 unix_socket = "0.4"
